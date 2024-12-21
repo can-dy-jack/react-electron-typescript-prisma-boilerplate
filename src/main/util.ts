@@ -1,6 +1,5 @@
 import { URL } from 'url';
 import path from 'path';
-import ExcelJS from 'exceljs';
 
 export function resolveHtmlPath(htmlFileName: string) {
   if (process.env.NODE_ENV === 'development') {
