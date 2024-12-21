@@ -6,7 +6,6 @@ pids
 *.seed
 
 coverage
-.eslintcache
 
 node_modules
 
