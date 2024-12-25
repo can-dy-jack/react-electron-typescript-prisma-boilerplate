@@ -13,10 +13,31 @@ datasource db {
 }
 
 // TODO 自定义自己的model
-model Information {
-  id     Int    @id @default(autoincrement())
-  label  String
-  link   String
-  detail String
-  finish String
+model groups {
+  group_id        Int                      @id @default(autoincrement())
+  group_name      String                   @unique
+  group_desc      String?
+  parent_group_id Int?
+  parent_group    groups?                  @relation("GroupHierarchy", fields: [parent_group_id], references: [group_id])
+  sub_groups      groups[]                 @relation("GroupHierarchy")
+  course          course_group_relations[]
+}
+
+model courses {
+  course_id     Int                      @id @default(autoincrement())
+  course_name   String                   @unique
+  course_desc   String?
+  label         String?
+  link          String?
+  detail        String?
+  isFinished    Boolean?
+  course_groups course_group_relations[]
+}
+
+model course_group_relations {
+  relation_id Int     @id @default(autoincrement())
+  course_id   Int
+  course      courses @relation(fields: [course_id], references: [course_id])
+  group_id    Int
+  group       groups  @relation(fields: [group_id], references: [group_id])
 }
