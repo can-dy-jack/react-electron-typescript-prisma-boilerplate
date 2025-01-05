@@ -1,15 +1,78 @@
 {
-  "name": "relationship",
-  "description": "An app for building relationship network.",
-  "version": "0.2.5",
+  "name": "react-electron-typescript-prisma-boilerplate",
+  "description": "A boilerplate for building a desktop application using React, Electron, TypeScript, and Prisma.",
+  "version": "0.0.1",
   "license": "MIT",
   "main": "./.erb/dll/main.bundle.dev.js",
   "author": "kartjim",
   "scripts": {
-    "w": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.dev.ts",
-    "start": "ts-node ./.erb/scripts/check-port-in-use.js"
+    "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
+    "build:dll": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
+    "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
+    "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
+    "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && npm run build:dll",
+    "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never && npm run build:dll",
+    "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
+    "prestart": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.dev.ts",
+    "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run prestart && npm run start:renderer",
+    "start:main": "concurrently -k \"cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --watch --config ./.erb/configs/webpack.config.main.dev.ts\" \"electronmon .\"",
+    "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
+    "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
+    "test": "jest",
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev"
   },
-
+  "browserslist": [
+    "extends browserslist-config-erb"
+  ],
+  "prettier": {
+    "singleQuote": true,
+    "overrides": [
+      {
+        "files": [
+          ".prettierrc",
+          ".eslintrc"
+        ],
+        "options": {
+          "parser": "json"
+        }
+      }
+    ]
+  },
+  "jest": {
+    "moduleDirectories": [
+      "node_modules",
+      "release/app/node_modules",
+      "src"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "ts",
+      "tsx",
+      "json"
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/.erb/mocks/fileMock.js",
+      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
+    },
+    "setupFiles": [
+      "./.erb/scripts/check-build-exists.ts"
+    ],
+    "testEnvironment": "jsdom",
+    "testEnvironmentOptions": {
+      "url": "http://localhost/"
+    },
+    "testPathIgnorePatterns": [
+      "release/app/dist",
+      ".erb/dll"
+    ],
+    "transform": {
+      "\\.(ts|tsx|js|jsx)$": "ts-jest"
+    }
+  },
   "dependencies": {
     "@electron/notarize": "^2.3.2",
     "@prisma/client": "^5.21.1",
@@ -20,9 +83,7 @@
     "exceljs": "^4.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-quill": "^2.0.0",
-    "react-router-dom": "^6.16.0",
-    "relation-graph-react": "^2.2.8"
+    "react-router-dom": "^6.16.0"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.3.0",
@@ -89,5 +150,95 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
     "webpack-merge": "^5.9.0"
+  },
+  "build": {
+    "productName": "Relationship",
+    "appId": "org.kartjim.Relationship",
+    "asar": true,
+    "asarUnpack": [
+      "**\\*.{node,dll}",
+      "prisma"
+    ],
+    "files": [
+      "dist",
+      "node_modules",
+      "package.json",
+      "prisma/**/*",
+      "resources/**/*",
+      "!**/node_modules/@prisma/engines/introspection-engine*",
+      "!**/node_modules/@prisma/engines/migration-engine*",
+      "!**/node_modules/@prisma/engines/prisma-fmt*",
+      "!**/node_modules/@prisma/engines/query_engine-*",
+      "!**/node_modules/@prisma/engines/libquery_engine*",
+      "!**/node_modules/prisma/query_engine*",
+      "!**/node_modules/prisma/libquery_engine*",
+      "!**/node_modules/prisma/**/*.mjs"
+    ],
+    "mac": {
+      "sign": ".erb/scripts/notarize.js",
+      "notarize": false,
+      "target": {
+        "target": "default",
+        "arch": [
+          "arm64",
+          "x64"
+        ]
+      },
+      "type": "distribution",
+      "hardenedRuntime": true,
+      "entitlements": "assets/entitlements.mac.plist",
+      "entitlementsInherit": "assets/entitlements.mac.plist",
+      "gatekeeperAssess": false
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icon.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Development"
+    },
+    "directories": {
+      "app": "release/app",
+      "buildResources": "assets",
+      "output": "release/build"
+    },
+    "extraResources": [
+      "./assets/**",
+      "prisma/**/*",
+      "node_modules/@prisma/engines/migration-engine*",
+      "node_modules/@prisma/engines/query*",
+      "node_modules/@prisma/engines/libquery*"
+    ]
+  },
+  "devEngines": {
+    "node": ">=14.x",
+    "npm": ">=7.x"
+  },
+  "electronmon": {
+    "patterns": [
+      "!**/**",
+      "src/main/**",
+      ".erb/dll/**"
+    ],
+    "logLevel": "quiet"
   }
 }

@@ -1,50 +1,31 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import './App.css';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   HomeOutlined,
-  UserAddOutlined,
-  UsergroupAddOutlined,
-  UserSwitchOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme } from 'antd';
 
 const { Header, Sider, Content } = Layout;
 
-export default function LayoutComponent({ children }) {
+interface LayoutComponentProps {
+  children?: ReactNode;
+}
+
+export default function LayoutComponent({ children }: LayoutComponentProps) {
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const [current, serCurrent] = useState<{ name?: string }>({});
-
   const menuItems = [
     {
       key: '1',
       icon: <HomeOutlined />,
-      label: <Link to="/">首页</Link>,
-      name: '',
-    },
-    {
-      key: '2',
-      icon: <UserAddOutlined />,
-      label: <Link to="/character">人物列表</Link>,
-      name: '人物列表',
-    },
-    {
-      key: '3',
-      icon: <UsergroupAddOutlined />,
-      label: <Link to="/groups">人物分组</Link>,
-      name: '人物分组',
-    },
-    {
-      key: '4',
-      icon: <UserSwitchOutlined />,
-      label: <Link to="/relation">人物关系</Link>,
-      name: '人物关系',
+      label: <Link to="/">Home</Link>,
+      name: 'Home',
     },
   ];
 
@@ -56,9 +37,6 @@ export default function LayoutComponent({ children }) {
           mode="inline"
           defaultSelectedKeys={['1']}
           items={menuItems}
-          onSelect={(data: any) => {
-            serCurrent(menuItems[Number(data.key) - 1]);
-          }}
         />
       </Sider>
       <Layout>
@@ -80,7 +58,7 @@ export default function LayoutComponent({ children }) {
               }}
             />
             <div style={{ flex: 1 }} className="app-bar">
-              人物关系网{current && current.name ? ` - ${current.name}` : ''}
+              Title
             </div>
           </div>
         </Header>

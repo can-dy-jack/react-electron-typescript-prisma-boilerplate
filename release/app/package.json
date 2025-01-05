@@ -1,7 +1,7 @@
 {
-  "name": "relationship",
-  "version": "0.2.5",
-  "description": "An app for building relationship network.",
+  "name": "react-electron-typescript-prisma-boilerplate",
+  "description": "A boilerplate for building a desktop application using React, Electron, TypeScript, and Prisma.",
+  "version": "0.0.1",
   "license": "MIT",
   "author": "kartjim",
   "main": "./dist/main/main.js",
