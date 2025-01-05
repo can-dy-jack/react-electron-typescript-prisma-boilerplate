@@ -1,0 +1,14 @@
+{
+  "name": "relationship",
+  "version": "0.2.5",
+  "description": "An app for building relationship network.",
+  "license": "MIT",
+  "author": "kartjim",
+  "main": "./dist/main/main.js",
+  "scripts": {
+    "rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
+    "postinstall": "npm run rebuild && npm run link-modules",
+    "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
+  },
+  "dependencies": {}
+}

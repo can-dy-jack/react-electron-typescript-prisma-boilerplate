@@ -2,7 +2,7 @@
   "compilerOptions": {
     "incremental": true,
     "target": "es2022",
-    "module": "commonjs",
+    // "module": "commonjs",
     "lib": ["dom", "es2022"],
     "jsx": "react-jsx",
     "strict": true,
@@ -12,7 +12,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "outDir": ".retpb/dll"
+    "outDir": ".erb/dll"
   },
-  "exclude": ["release/build", "release/app/dist", ".retpb/dll"]
+  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }
