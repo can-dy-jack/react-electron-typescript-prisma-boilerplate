@@ -2,9 +2,7 @@ generator client {
   provider      = "prisma-client-js"
   engineType    = "library"
   binaryTargets = ["native", "windows"]
-
-  // TODO Comment out this line and regenerate
-  output = "../release/app/node_modules/@prisma/client"
+  output = env("PRISMA_CLIENT_OUTPUT")
 }
 
 datasource db {

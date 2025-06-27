@@ -21,8 +21,12 @@
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "jest",
-    "generate": "prisma generate",
-    "migrate": "prisma migrate dev"
+    "generate_release": "cross-env PRISMA_CLIENT_OUTPUT='../release/app/node_modules/@prisma/client' prisma generate",
+    "generate_node_modules": "cross-env PRISMA_CLIENT_OUTPUT='./node_modules/@prisma/client' prisma generate",
+    "generate": "yarn generate_release && yarn generate_node_modules",
+    "migrate_release": "cross-env PRISMA_CLIENT_OUTPUT='../release/app/node_modules/@prisma/client' prisma migrate dev",
+    "migrate_node_modules": "cross-env PRISMA_CLIENT_OUTPUT='./node_modules/@prisma/client' prisma migrate dev",
+    "migrate": "yarn migrate_release && yarn migrate_node_modules"
   },
   "browserslist": [
     "extends browserslist-config-erb"
@@ -75,7 +79,7 @@
   },
   "dependencies": {
     "@electron/notarize": "^2.3.2",
-    "@prisma/client": "^5.21.1",
+    "@prisma/client": "5.22.0",
     "antd": "^5.21.4",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
@@ -228,10 +232,6 @@
       "node_modules/@prisma/engines/query*",
       "node_modules/@prisma/engines/libquery*"
     ]
-  },
-  "devEngines": {
-    "node": ">=14.x",
-    "npm": ">=7.x"
   },
   "electronmon": {
     "patterns": [

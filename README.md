@@ -1,16 +1,22 @@
 # react-electron-typescript-prisma-boilerplate
 
+> 一个技术栈为 React + TypeScript + Electron + prisma(sqlite) 的模板代码库。
+
+## 本地运行
 ```bash
-yarn install
+yarn
+
+# init prisma
+yarn generate
+yarn migrate
 
 # develop
 yarn start
 
-# build
-yarn build
+# package
+yarn package
 ```
 
-## 参考资料
+## TODO
 
-- [electron-react-boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate)
-- [electron-vite-vue-prisma-i18next-example](https://github.com/leoFitz1024/electron-vite-vue-prisma-i18next-example)
+- [ ] 打包到 mac 还有点问题
